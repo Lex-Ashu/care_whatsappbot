@@ -83,3 +83,11 @@ venv.bak/
 
 # Mac
 .DS_Store
+
+# Demo and test scripts
+demo_whatsapp_bot.py
+realtime_whatsapp_demo.py
+test_whatsapp_webhook.py
+test_bot_components.py
+automated_demo.py
+whatsapp_django_settings.py

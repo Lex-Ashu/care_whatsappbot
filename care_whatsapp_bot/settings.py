@@ -7,7 +7,7 @@ from django.core.signals import setting_changed
 from django.dispatch import receiver
 from rest_framework.settings import perform_import
 
-from hello.apps import PLUGIN_NAME
+from care_whatsapp_bot.apps import PLUGIN_NAME
 
 env = environ.Env()
 
@@ -98,11 +98,55 @@ class PluginSettings:  # pragma: no cover
 
 
 REQUIRED_SETTINGS = {
-    "HELLO_DUMMY_ENV",
+    "WHATSAPP_ACCESS_TOKEN",
+    "WHATSAPP_PHONE_NUMBER_ID",
+    "WHATSAPP_WEBHOOK_VERIFY_TOKEN",
+    "WHATSAPP_WEBHOOK_SECRET",
 }
 
 DEFAULTS = {
-    "HELLO_DUMMY_ENV": "test",
+    # WhatsApp Business API Configuration
+    "WHATSAPP_ACCESS_TOKEN": "",
+    "WHATSAPP_PHONE_NUMBER_ID": "",
+    "WHATSAPP_WEBHOOK_VERIFY_TOKEN": "care_whatsapp_bot_verify",
+    "WHATSAPP_WEBHOOK_SECRET": "",
+    "WHATSAPP_API_VERSION": "v18.0",
+    "WHATSAPP_BASE_URL": "https://graph.facebook.com",
+    
+    # Bot Configuration
+    "BOT_NAME": "CARE Assistant",
+    "BOT_WELCOME_MESSAGE": "Welcome to CARE! I'm here to help you with your healthcare needs. Type 'help' to see available commands.",
+    "BOT_HELP_MESSAGE": "Available commands:\n- login: Authenticate with your credentials\n- records: View your medical records\n- appointments: View your appointments\n- medications: View your medications\n- help: Show this help message\n- logout: End your session",
+    
+    # Session Configuration
+    "SESSION_TIMEOUT_MINUTES": 30,
+    "MAX_RETRY_ATTEMPTS": 3,
+    "RATE_LIMIT_MESSAGES_PER_MINUTE": 10,
+    
+    # Privacy and Security
+    "ENABLE_MESSAGE_ENCRYPTION": False,
+    "LOG_SENSITIVE_DATA": False,
+    "REQUIRE_PHONE_VERIFICATION": True,
+    
+    # Media Handling
+    "MAX_FILE_SIZE_MB": 16,
+    "ALLOWED_FILE_TYPES": ["pdf", "jpg", "jpeg", "png", "doc", "docx"],
+    "MEDIA_STORAGE_PATH": "/tmp/whatsapp_media",
+    
+    # Notification Settings
+    "ENABLE_APPOINTMENT_REMINDERS": True,
+    "ENABLE_MEDICATION_REMINDERS": True,
+    "REMINDER_ADVANCE_HOURS": 24,
+    
+    # Development Settings
+    "DEBUG_WEBHOOK": False,
+    "MOCK_WHATSAPP_API": False,
+    "TEST_PHONE_NUMBERS": [],
+    
+    # Legacy settings for backward compatibility
+    "CARE_WHATSAPP_BOT_API_KEY": "",
+    "CARE_WHATSAPP_BOT_WEBHOOK_URL": "",
+    "CARE_WHATSAPP_BOT_VERIFY_TOKEN": "care_whatsapp_bot_verify",
 }
 
 plugin_settings = PluginSettings(
