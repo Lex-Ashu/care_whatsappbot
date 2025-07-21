@@ -220,6 +220,31 @@ def cleanup_whatsapp_data():
 
 
 @shared_task
+def schedule_appointment_reminders(days_ahead=7):
+    """Schedule reminders for upcoming appointments"""
+    from .services.appointment_reminder_service import AppointmentReminderService
+    
+    logger.info(f"Scheduling appointment reminders for the next {days_ahead} days")
+    
+    try:
+        service = AppointmentReminderService()
+        result = service.schedule_reminders_for_upcoming_consultations(days_ahead=days_ahead)
+        
+        if result['status'] == 'success':
+            logger.info(
+                f"Successfully scheduled reminders for {result['scheduled_reminders']} "
+                f"out of {result['total_consultations']} upcoming consultations"
+            )
+        else:
+            logger.error(f"Error scheduling appointment reminders: {result['error']}")
+            
+        return result
+    
+    except Exception as e:
+        logger.error(f"Error in appointment reminder scheduling task: {e}")
+
+
+@shared_task
 def send_scheduled_notifications():
     """Send scheduled WhatsApp notifications"""
     logger.info("Checking for scheduled WhatsApp notifications")
