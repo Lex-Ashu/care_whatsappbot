@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.core.cache import cache
 from datetime import timedelta
 import logging
+from django.conf import settings
+from celery import shared_task
 
 from .models import (
     WhatsAppSession,
@@ -210,16 +212,11 @@ def cleanup_old_commands(days=90):
         logger.info(f"Cleaned up {count} old WhatsApp commands (older than {days} days)")
 
 
-def cleanup_old_notifications(days=180):
-    """Clean up old notifications"""
-    cutoff_date = timezone.now() - timedelta(days=days)
-    
-    old_notifications = WhatsAppNotification.objects.filter(
-        created_at__lt=cutoff_date,
-        status__in=['sent', 'delivered', 'read', 'failed']
-    )
-    
-    count = old_notifications.count()
-    if count > 0:
-        old_notifications.delete()
-        logger.info(f"Cleaned up {count} old WhatsApp notifications (older than {days} days)")
+@shared_task
+def delete_old_notifications():
+    from .models.whatsapp import WhatsAppNotification
+    from django.utils import timezone
+    from datetime import timedelta
+    retention_days = getattr(settings, 'NOTIFICATION_RETENTION_DAYS', 30)
+    threshold_date = timezone.now() - timedelta(days=retention_days)
+    WhatsAppNotification.objects.filter(created_at__lte=threshold_date).delete()

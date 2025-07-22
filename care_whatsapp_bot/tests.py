@@ -412,3 +412,72 @@ class TaskTests(TestCase):
         notification.refresh_from_db()
         self.assertEqual(notification.status, 'sent')
         mock_send.assert_called_once()
+
+
+def test_cleanup_old_notifications_respects_retention_days(self):
+    from care_whatsapp_bot.signals import cleanup_old_notifications
+    from care_whatsapp_bot.models.whatsapp import WhatsAppNotification
+    from care_whatsapp_bot.settings import plugin_settings
+    from django.utils import timezone
+    from datetime import timedelta
+
+    # Create a notification older than retention period
+    retention_days = plugin_settings.NOTIFICATION_RETENTION_DAYS
+    old_date = timezone.now() - timedelta(days=retention_days + 1)
+    notification = WhatsAppNotification.objects.create(
+        phone_number="+1234567890",
+        notification_type="test",
+        title="Old Notification",
+        message="This is old",
+        status="sent",
+        created_at=old_date,
+        scheduled_at=old_date
+    )
+    # Create a notification within retention period
+    recent_date = timezone.now() - timedelta(days=retention_days - 1)
+    notification2 = WhatsAppNotification.objects.create(
+        phone_number="+1234567891",
+        notification_type="test",
+        title="Recent Notification",
+        message="This is recent",
+        status="sent",
+        created_at=recent_date,
+        scheduled_at=recent_date
+    )
+    cleanup_old_notifications()
+    # Old notification should be deleted, recent should remain
+    self.assertFalse(WhatsAppNotification.objects.filter(id=notification.id).exists())
+    self.assertTrue(WhatsAppNotification.objects.filter(id=notification2.id).exists())
+
+
+def test_delete_old_notifications_task(self):
+    from care_whatsapp_bot.signals import delete_old_notifications
+    from care_whatsapp_bot.models.whatsapp import WhatsAppNotification
+    from django.conf import settings
+    from django.utils import timezone
+    from datetime import timedelta
+
+    retention_days = getattr(settings, 'NOTIFICATION_RETENTION_DAYS', 30)
+    old_date = timezone.now() - timedelta(days=retention_days + 1)
+    notification = WhatsAppNotification.objects.create(
+        phone_number="+1234567890",
+        notification_type="test",
+        title="Old Notification",
+        message="This is old",
+        status="sent",
+        created_at=old_date,
+        scheduled_at=old_date
+    )
+    recent_date = timezone.now() - timedelta(days=retention_days - 1)
+    notification2 = WhatsAppNotification.objects.create(
+        phone_number="+1234567891",
+        notification_type="test",
+        title="Recent Notification",
+        message="This is recent",
+        status="sent",
+        created_at=recent_date,
+        scheduled_at=recent_date
+    )
+    delete_old_notifications()
+    self.assertFalse(WhatsAppNotification.objects.filter(id=notification.id).exists())
+    self.assertTrue(WhatsAppNotification.objects.filter(id=notification2.id).exists())
