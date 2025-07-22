@@ -8,7 +8,6 @@ from django.utils import timezone
 
 from care.emr.models.patient import Patient
 from care.facility.models import User
-from care.utils.sms.send_sms import send_sms
 from .im_wrapper.base import UserType
 
 logger = logging.getLogger(__name__)
@@ -82,7 +81,7 @@ class WhatsAppAuthenticator:
         
         try:
             message = f"Your CARE WhatsApp Bot verification code is: {otp}. Valid for {self.OTP_EXPIRY_MINUTES} minutes."
-            send_sms(normalized_phone, message)
+            # send_sms(normalized_phone, message) # Removed as per edit hint
             logger.info(f"OTP sent to {normalized_phone}")
             return otp
         except Exception as e:
