@@ -7,6 +7,7 @@ from datetime import datetime
 
 import requests
 from django.conf import settings
+from care_whatsapp_bot.settings import plugin_settings
 
 from .base import BaseIMProvider, IMMessage, IMResponse, MessageType
 
@@ -18,9 +19,10 @@ class WhatsAppProvider(BaseIMProvider):
     
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
-        self.access_token = config.get('access_token') or getattr(settings, 'WHATSAPP_ACCESS_TOKEN', None)
-        self.phone_number_id = config.get('phone_number_id') or getattr(settings, 'WHATSAPP_PHONE_NUMBER_ID', None)
-        self.webhook_verify_token = config.get('webhook_verify_token') or getattr(settings, 'WHATSAPP_WEBHOOK_VERIFY_TOKEN', None)
+        # Always use plugin_settings as fallback if config values are missing or None
+        self.access_token = config.get('access_token') or getattr(settings, 'WHATSAPP_ACCESS_TOKEN', None) or getattr(plugin_settings, 'WHATSAPP_ACCESS_TOKEN', None)
+        self.phone_number_id = config.get('phone_number_id') or getattr(settings, 'WHATSAPP_PHONE_NUMBER_ID', None) or getattr(plugin_settings, 'WHATSAPP_PHONE_NUMBER_ID', None)
+        self.webhook_verify_token = config.get('webhook_verify_token') or getattr(settings, 'WHATSAPP_WEBHOOK_VERIFY_TOKEN', None) or getattr(plugin_settings, 'WHATSAPP_WEBHOOK_VERIFY_TOKEN', None)
         self.app_secret = config.get('app_secret') or getattr(settings, 'WHATSAPP_APP_SECRET', None)
         self.api_version = config.get('api_version', 'v23.0')
         self.base_url = f"https://graph.facebook.com/{self.api_version}"
