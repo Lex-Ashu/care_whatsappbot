@@ -72,20 +72,19 @@ class WhatsAppMessageAdmin(admin.ModelAdmin):
         'direction',
         'message_type',
         'content_preview',
-        'is_processed',
+        'processed',
         'created_at'
     ]
     list_filter = [
         'direction',
         'message_type',
-        'is_processed',
+        'processed',
         'created_at'
     ]
     search_fields = ['session__phone_number', 'content']
     readonly_fields = [
         'whatsapp_message_id',
         'created_at',
-        'updated_at',
         'processed_at'
     ]
     
@@ -103,7 +102,7 @@ class WhatsAppMessageAdmin(admin.ModelAdmin):
         }),
         ('Processing', {
             'fields': (
-                'is_processed',
+                'processed',
                 'processed_at'
             )
         }),
@@ -129,34 +128,34 @@ class WhatsAppMessageAdmin(admin.ModelAdmin):
 class WhatsAppCommandAdmin(admin.ModelAdmin):
     list_display = [
         'session_phone',
-        'command_type',
-        'is_successful',
+        'command',
+        'success',
         'executed_at'
     ]
     list_filter = [
-        'command_type',
-        'is_successful',
+        'command',
+        'success',
         'executed_at'
     ]
     search_fields = ['session__phone_number']
-    readonly_fields = ['executed_at', 'created_at']
+    readonly_fields = ['executed_at']
     
     fieldsets = (
         ('Command Information', {
             'fields': (
                 'session',
-                'command_type',
+                'command',
                 'command_data'
             )
         }),
         ('Execution Details', {
             'fields': (
-                'is_successful',
+                'success',
                 'error_message'
             )
         }),
         ('Timestamps', {
-            'fields': ('executed_at', 'created_at')
+            'fields': ('executed_at',)
         })
     )
     
@@ -171,7 +170,7 @@ class WhatsAppCommandAdmin(admin.ModelAdmin):
 @admin.register(WhatsAppNotification)
 class WhatsAppNotificationAdmin(admin.ModelAdmin):
     list_display = [
-        'patient_id',
+        'patient',
         'notification_type',
         'status',
         'scheduled_at',
@@ -183,19 +182,18 @@ class WhatsAppNotificationAdmin(admin.ModelAdmin):
         'scheduled_at',
         'sent_at'
     ]
-    search_fields = ['patient_id', 'content']
+    search_fields = ['patient', 'message']
     readonly_fields = [
         'sent_at',
-        'created_at',
-        'updated_at'
+        'created_at'
     ]
     
     fieldsets = (
         ('Notification Information', {
             'fields': (
-                'patient_id',
+                'patient',
                 'notification_type',
-                'content'
+                'message'
             )
         }),
         ('Scheduling', {
@@ -206,7 +204,7 @@ class WhatsAppNotificationAdmin(admin.ModelAdmin):
             )
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
+            'fields': ('created_at',),
             'classes': ('collapse',)
         })
     )
