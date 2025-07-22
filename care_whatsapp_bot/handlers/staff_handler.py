@@ -74,12 +74,12 @@ class StaffHandler:
                 return [IMResponse(phone_number, MessageType.TEXT, msg)]
             
             staff_user = User.objects.get(id=user_id)
-             
-             patients = Patient.objects.filter(
-                 Q(name__icontains=query) |
-                 Q(phone_number__icontains=query) |
-                 Q(external_id__icontains=query)
-             )[:10]  # Limit to 10 results
+            
+            patients = Patient.objects.filter(
+                Q(name__icontains=query) |
+                Q(phone_number__icontains=query) |
+                Q(external_id__icontains=query)
+            )[:10]  # Limit to 10 results
             
             if not patients:
                 msg = f"🔍 No patients found matching '{query}'.\nTry searching with a different term."
@@ -122,9 +122,9 @@ class StaffHandler:
                 return [IMResponse(phone_number, MessageType.TEXT, msg)]
             
             staff_user = User.objects.get(id=user_id)
-             
-             try:
-                 patient = Patient.objects.get(external_id=patient_id)
+            
+            try:
+                patient = Patient.objects.get(external_id=patient_id)
             except Patient.DoesNotExist:
                 msg = f"❌ Patient with ID '{patient_id}' not found."
                 return [IMResponse(phone_number, MessageType.TEXT, msg)]
@@ -134,8 +134,8 @@ class StaffHandler:
                 return [IMResponse(phone_number, MessageType.TEXT, msg)]
             
             filtered_patient = self.privacy_filter.filter_patient_data_for_staff(patient, staff_user)
-             
-             info_text = f"👤 *Patient Information*\n\n"
+            
+            info_text = f"👤 *Patient Information*\n\n"
             info_text += f"*Name:* {filtered_patient['name']}\n"
             info_text += f"*ID:* {filtered_patient['patient_id']}\n"
             
