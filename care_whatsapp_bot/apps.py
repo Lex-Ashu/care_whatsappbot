@@ -7,3 +7,6 @@ PLUGIN_NAME = "care_whatsapp_bot"
 class CareWhatsappBotConfig(AppConfig):
     name = PLUGIN_NAME
     verbose_name = _("Care WhatsApp Bot")
+
+    def ready(self):
+        from . import signals
