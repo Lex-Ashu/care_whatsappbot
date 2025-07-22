@@ -6,7 +6,7 @@ import logging
 import time
 from datetime import timedelta
 
-from .models import (
+from .models.whatsapp import (
     WhatsAppMessage,
     WhatsAppNotification,
     WhatsAppSession,
