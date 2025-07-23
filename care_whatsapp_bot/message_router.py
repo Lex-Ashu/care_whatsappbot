@@ -1,4 +1,5 @@
 from care_whatsapp_bot.im_wrapper.whatsapp import WhatsAppProvider
+from care_whatsapp_bot.im_wrapper.base import IMResponse, MessageType
 from care_whatsapp_bot.settings import plugin_settings
 
 class MessageRouter:
@@ -19,13 +20,28 @@ class MessageRouter:
 
     def _handle_menu(self, sender):
         msg = "Welcome to CARE!\n1. View Appointments\n2. About Care\nReply with the option."
-        self.whatsapp.send_message(sender, msg)
+        response = IMResponse(
+            recipient_id=sender,
+            message_type=MessageType.TEXT,
+            content=msg
+        )
+        self.whatsapp.send_message(response)
 
     def _handle_view_appointments(self, sender):
         # Placeholder: Replace with real appointment fetch logic
         msg = "You have no upcoming appointments."
-        self.whatsapp.send_message(sender, msg)
+        response = IMResponse(
+            recipient_id=sender,
+            message_type=MessageType.TEXT,
+            content=msg
+        )
+        self.whatsapp.send_message(response)
 
     def _handle_about_care(self, sender):
         msg = "CARE is your digital healthcare companion. Visit https://ohc.network for more."
-        self.whatsapp.send_message(sender, msg) 
+        response = IMResponse(
+            recipient_id=sender,
+            message_type=MessageType.TEXT,
+            content=msg
+        )
+        self.whatsapp.send_message(response)

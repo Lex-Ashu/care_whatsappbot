@@ -3,8 +3,12 @@ from django.dispatch import receiver
 from care_whatsapp_bot.im_wrapper.whatsapp import WhatsAppProvider
 from care_whatsapp_bot.settings import plugin_settings
 
+# Import your TokenBooking model from CARE
 from care.emr.models.scheduling.booking import TokenBooking
 
+print("[PLUGIN] TokenBooking id:", id(TokenBooking), "module:", TokenBooking.__module__)
+
+# Try to import IMResponse and MessageType, fallback to simple text if not available
 try:
     from care_whatsapp_bot.im_wrapper.base import IMResponse, MessageType
 except ImportError:
@@ -13,7 +17,8 @@ except ImportError:
 
 @receiver(post_save, sender=TokenBooking)
 def appointment_schedule_notification(sender, instance, created, **kwargs):
-    print("TokenBooking post_save signal fired")
+    print("[SIGNAL] TokenBooking id:", id(TokenBooking), "module:", TokenBooking.__module__)
+    print("TokenBooking post_save signal fired", instance)
     if created:
         whatsapp = WhatsAppProvider({
             'access_token': plugin_settings.WHATSAPP_ACCESS_TOKEN,
@@ -43,4 +48,4 @@ def appointment_schedule_notification(sender, instance, created, **kwargs):
                     content=f"You have a new appointment scheduled. {details}"
                 ))
             else:
-                whatsapp.send_message(practitioner.phone_number, f"You have a new appointment scheduled. {details}") 
+                whatsapp.send_message(practitioner.phone_number, f"You have a new appointment scheduled. {details}")
