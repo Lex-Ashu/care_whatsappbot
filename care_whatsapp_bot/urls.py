@@ -39,6 +39,6 @@ class WebhookProxyView(View):
             return HttpResponse(f'Error: {str(e)}', status=500)
 
 urlpatterns = [
-    path('webhook/', WebhookProxyView.as_view(), name='whatsapp-webhook-proxy'),
+    path('webhook/', WhatsAppWebhookView.as_view(), name='whatsapp-webhook-proxy'),
     path('api/care_whatsapp_bot/webhook/', WhatsAppWebhookView.as_view(), name='whatsapp-webhook'),
 ]
