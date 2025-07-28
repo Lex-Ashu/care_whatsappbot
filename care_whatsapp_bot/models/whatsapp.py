@@ -174,7 +174,7 @@ class WhatsAppInboundMessage(models.Model):
     response_sent = models.BooleanField(default=False)
     
     # Patient linking
-    patient = models.ForeignKey('patient.Patient', on_delete=models.SET_NULL, null=True, blank=True)
+    patient = models.ForeignKey('emr.Patient', on_delete=models.SET_NULL, null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     processed_at = models.DateTimeField(null=True, blank=True)
